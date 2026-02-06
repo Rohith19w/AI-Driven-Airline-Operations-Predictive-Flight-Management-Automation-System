@@ -36,10 +36,23 @@ def write_daily_report(
         f.write(f"Generated:   {datetime.now().strftime('%H:%M:%S')}\n")
         f.write("─"*90 + "\n\n")
 
+        if total_flights == 0:
+            f.write("┌─ NOTICE " + "─"*78 + "┐\n")
+            f.write("│ NO FLIGHT DATA AVAILABLE FOR THIS REPORT PERIOD\n")
+            f.write("│ Please check data files in /data directory\n")
+            f.write("└" + "─"*88 + "┘\n\n")
+            f.write("╔" + "═"*88 + "╗\n")
+            f.write("║" + " "*35 + "END OF REPORT" + " "*40 + "║\n")
+            f.write("╚" + "═"*88 + "╝\n")
+            return path
+
+        on_time_pct = (on_time_flights/total_flights*100) if total_flights > 0 else 0
+        delayed_pct = (len(delayed_flights)/total_flights*100) if total_flights > 0 else 0
+
         f.write("┌─ EXECUTIVE SUMMARY " + "─"*68 + "┐\n")
         f.write(f"│ Total Flights Monitored          : {total_flights:>3} flights" + " "*38 + "│\n")
-        f.write(f"│ On-Time Performance              : {on_time_flights:>3} flights ({on_time_flights/total_flights*100:.1f}%)" + " "*28 + "│\n")
-        f.write(f"│ Delayed Flights                  : {len(delayed_flights):>3} flights ({len(delayed_flights)/total_flights*100:.1f}%)" + " "*28 + "│\n")
+        f.write(f"│ On-Time Performance              : {on_time_flights:>3} flights ({on_time_pct:.1f}%)" + " "*28 + "│\n")
+        f.write(f"│ Delayed Flights                  : {len(delayed_flights):>3} flights ({delayed_pct:.1f}%)" + " "*28 + "│\n")
         f.write(f"│ Total Delay Time                 : {total_delay_time:>4} minutes" + " "*36 + "│\n")
         f.write(f"│ Average Load Factor              : {avg_load:>5.1f}%" + " "*42 + "│\n")
         f.write(f"│ Critical Alerts                  : {len(critical_alerts):>3}" + " "*47 + "│\n")
