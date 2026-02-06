@@ -1,4 +1,4 @@
-FlightID,Booked,Capacity,HistoricalLoad
+FlightID,Booked,Capacity,HistoricalLoadPct
 FK101,195,200,82;78;85;90;88
 FK102,210,200,95;98;102;105;100
 FK103,150,180,70;72;68;75;73
