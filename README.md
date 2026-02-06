@@ -75,7 +75,9 @@ Generates:
 ## 📁 Project Structure
 
 \`\`\`text
-airline_ops_automation/
+
+"airline_ops_automation/
+
 │── airline_config.json          # Thresholds and operational rules
 │── main.py                      # Main execution controller
 │── requirements.txt             # Project dependencies
@@ -99,7 +101,7 @@ airline_ops_automation/
 │   ├── aircraft_health_alerts.log
 └── output/                      # Auto-generated reports
     └── reports/
-        └── aviation_report_YYYY-MM-DD.txt
+        └── aviation_report_YYYY-MM-DD.txt"
 \`\`\`
 
 ## ⚙️ Installation & Setup
