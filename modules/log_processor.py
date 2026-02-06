@@ -147,55 +147,95 @@ def parse_operational_status(path="data/operational_status.csv"):
     with open(path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            fid = row["FlightID"].strip()
+            row = {k.strip(): v.strip() for k, v in row.items()}
+            fid = row.get("FlightID", "").strip()
+            if not fid:
+                continue
             out[fid] = {
-                "runway_queue": int(row["RunwayQueueMin"]),
-                "boarding_time": int(row["BoardingTimeMin"])
+                "runway_queue": int(row.get("RunwayQueueMin", 0)),
+                "boarding_time": int(row.get("BoardingTimeMin", 0))
             }
     return out
 
-def parse_crew_schedule(file_path='data/crew_schedule.csv'):
-    crew_data = {}
-    try:
-        with open(file_path, 'r') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                fid = row.get('FlightID')
-                if not fid:
-                    continue
-                
-                pilots = row.get('PilotIDs', '').split(';') if row.get('PilotIDs') else []
-                cabin = row.get('CabinCrewIDs', '').split(';') if row.get('CabinCrewIDs') else []
-                
-                hours_str = row.get('HoursWorked', '')
-                rest_str = row.get('LastRest', '')
-                
-                hours = [int(x) for x in hours_str.split(';')] if hours_str else []
-                rest = [int(x) for x in rest_str.split(';')] if rest_str else []
-                
-                crew_data[fid] = {
-                    'pilots': [{'id': p, 'hours_worked': h, 'last_rest': r} for p, h, r in zip(pilots, hours, rest)],
-                    'cabin_crew': [{'id': c} for c in cabin],
-                    'available': row.get('Available', 'NO').upper() == 'YES'
-                }
-    except FileNotFoundError:
-        print(f"Warning: {file_path} not found.")
-    except KeyError as e:
-        print(f"Error reading CSV header in crew schedule: Missing column {e}")
+def parse_crew_schedule(path="data/crew_schedule.csv"):
+    out = {}
+    with open(path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
         
-    return crew_data
+        for row in reader:
+            row = {k.strip(): v.strip() for k, v in row.items()}
+            
+            fid = row.get("FlightID", "").strip()
+            if not fid:
+                continue
+
+            pilots_raw = row.get("PilotIDs", "")
+            cabin_raw = row.get("CabinCrewIDs", "")
+            hours_raw = row.get("PilotHoursWorked", "")
+            rest_raw = row.get("PilotLastRestHours", "")
+            avail_raw = row.get("CrewAvailable", "YES")
+
+            pilots = [p.strip() for p in pilots_raw.split(";") if p.strip()]
+            cabin = [c.strip() for c in cabin_raw.split(";") if c.strip()]
+            
+            if hours_raw:
+                phw = [int(x.strip()) for x in hours_raw.split(";") if x.strip()]
+            else:
+                phw = [0] * len(pilots)
+            
+            if rest_raw:
+                plr = [int(x.strip()) for x in rest_raw.split(";") if x.strip()]
+            else:
+                plr = [10] * len(pilots)
+
+            crew_available = (avail_raw.upper() == "YES")
+
+            pilot_objs = []
+            for i in range(len(pilots)):
+                pilot_objs.append({
+                    "id": pilots[i],
+                    "hours_worked": phw[i] if i < len(phw) else 0,
+                    "last_rest": plr[i] if i < len(plr) else 10,
+                    "available": crew_available
+                })
+
+            cabin_objs = [
+                {"id": c, "hours_worked": 0, "last_rest": 12, "available": crew_available}
+                for c in cabin
+            ]
+
+            out[fid] = {
+                "flight_id": fid,
+                "pilots": pilot_objs,
+                "cabin_crew": cabin_objs,
+                "crew_available": crew_available
+            }
+    return out
 
 def parse_passenger_load(path="data/passenger_load.csv"):
     out = {}
     with open(path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            fid = row["FlightID"].strip()
-            hist = [int(x) for x in row["HistoricalLoadPct"].split(";") if x.strip()]
+            row = {k.strip(): v.strip() for k, v in row.items()}
+            
+            fid = row.get("FlightID", "").strip()
+            if not fid:
+                continue
+                
+            booked = int(row.get("Booked", 0))
+            capacity = int(row.get("Capacity", 200))
+            hist_raw = row.get("HistoricalLoadPct", "")
+            
+            if hist_raw:
+                hist = [int(x.strip()) for x in hist_raw.split(";") if x.strip()]
+            else:
+                hist = [80]
+            
             out[fid] = {
                 "flight_id": fid,
-                "booked": int(row["Booked"]),
-                "capacity": int(row["Capacity"]),
+                "booked": booked,
+                "capacity": capacity,
                 "historical_load_pct": hist
             }
     return out
