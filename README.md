@@ -73,3 +73,73 @@ Generates:
 ---
 
 ## 📁 Project Structure
+
+\`\`\`text
+airline_ops_automation/
+│── airline_config.json          # Thresholds and operational rules
+│── main.py                      # Main execution controller
+│── requirements.txt             # Project dependencies
+│── README.md                    # Project documentation
+│── modules/                     # Core logic modules
+│   ├── log_processor.py
+│   ├── delay_predictor.py
+│   ├── crew_optimizer.py
+│   ├── load_predictor.py
+│   ├── health_monitor.py
+│   ├── dashboard.py
+│   └── reporter.py
+│── data/                        # Simulated input logs & CSVs
+│   ├── engine_performance.log
+│   ├── cabin_pressure.log
+│   ├── weather_data.log
+│   ├── airspeed_altitude.log
+│   ├── crew_schedule.csv
+│   └── passenger_load.csv
+│── logs/                        # Auto-generated critical alerts
+│   ├── aircraft_health_alerts.log
+└── output/                      # Auto-generated reports
+    └── reports/
+        └── aviation_report_YYYY-MM-DD.txt
+\`\`\`
+
+## ⚙️ Installation & Setup
+
+1. **Clone the repository** (or extract the project folder):
+   \`\`\`bash
+   git clone https://github.com/yourusername/airline_ops_automation.git
+   cd airline_ops_automation
+   \`\`\`
+
+2. **Create a Virtual Environment** (Recommended):
+   \`\`\`bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   \`\`\`
+
+3. **Install Dependencies**:
+   \`\`\`bash
+   pip install -r requirements.txt
+   \`\`\`
+
+## 🚀 How to Run
+
+Execute the main controller script from the root directory:
+\`\`\`bash
+python main.py
+\`\`\`
+
+### What to expect upon execution:
+1. The **Log Processor** will ingest all files from the `data/` directory.
+2. The **Dashboard** will print directly to your terminal, displaying flight status, delays, and alerts in a formatted grid.
+3. Any critical aircraft issues will be appended to `logs/aircraft_health_alerts.log`.
+4. A full daily summary report will be generated in `output/reports/`.
+
+## 🛠️ Configuration
+You can easily tweak the system's operational rules without changing the code. Open `airline_config.json` to adjust:
+* Weather thresholds (e.g., maximum safe crosswind speed).
+* Maintenance thresholds (e.g., maximum allowed engine vibration).
+* Crew rules (e.g., minimum rest hours required).
+
+## 👨‍💻 Author
+**Jakkireddy Rohith Raghavendra Reddy**  
+*Python Intern @ Flipkart Pvt Ltd*
