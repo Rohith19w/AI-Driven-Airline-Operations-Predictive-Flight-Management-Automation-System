@@ -108,8 +108,8 @@ Generates:
 
 1. **Clone the repository** (or extract the project folder):
    \`\`\`bash
-   git clone https://github.com/yourusername/airline_ops_automation.git
-   cd airline_ops_automation
+   git clone https://github.com/Rohith19w/AI-Driven-Airline-Operations-Predictive-Flight-Management-Automation-System.git
+   cd AI-Driven-Airline-Operations-Predictive-Flight-Management-Automation-System
    \`\`\`
 
 2. **Create a Virtual Environment** (Recommended):
