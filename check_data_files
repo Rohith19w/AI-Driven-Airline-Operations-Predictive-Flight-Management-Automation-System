@@ -1,0 +1,44 @@
+import os
+
+data_files = [
+    "data/engine_performance.log",
+    "data/cabin_pressure.log",
+    "data/weather_data.log",
+    "data/airspeed_altitude.log",
+    "data/operational_status.csv",
+    "data/crew_schedule.csv",
+    "data/passenger_load.csv"
+]
+
+print("Checking data files...\n")
+
+all_ok = True
+for filepath in data_files:
+    if os.path.exists(filepath):
+        size = os.path.getsize(filepath)
+        with open(filepath, 'r') as f:
+            lines = len(f.readlines())
+        print(f"✓ {filepath:<35} ({size:>6} bytes, {lines:>3} lines)")
+    else:
+        print(f"✗ {filepath:<35} MISSING")
+        all_ok = False
+
+print("\n" + "="*70)
+if all_ok:
+    print("All files present. Checking content...")
+    
+    try:
+        with open("data/engine_performance.log", 'r') as f:
+            first_line = f.readline().strip()
+            print(f"\nEngine log sample:\n  {first_line}")
+    except Exception as e:
+        print(f"Error reading engine log: {e}")
+    
+    try:
+        with open("data/crew_schedule.csv", 'r') as f:
+            header = f.readline().strip()
+            print(f"\nCrew CSV header:\n  {header}")
+    except Exception as e:
+        print(f"Error reading crew CSV: {e}")
+else:
+    print("MISSING FILES - Run fix_csv_files.py to create them")
