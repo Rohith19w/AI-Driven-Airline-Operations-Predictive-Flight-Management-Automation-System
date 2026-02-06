@@ -154,38 +154,36 @@ def parse_operational_status(path="data/operational_status.csv"):
             }
     return out
 
-def parse_crew_schedule(path="data/crew_schedule.csv"):
-    out = {}
-    with open(path, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            fid = row["FlightID"].strip()
-
-            pilots = row["PilotIDs"].split(";")
-            cabin = row["CabinCrewIDs"].split(";")
-
-            phw = [int(x) for x in row["PilotHoursWorked"].split(";")]
-            plr = [int(x) for x in row["PilotLastRestHours"].split(";")]
-
-            crew_available = (row["CrewAvailable"].strip().upper() == "YES")
-
-            pilot_objs = [
-                {"id": pilots[i].strip(), "hours_worked": phw[i], "last_rest": plr[i], "available": crew_available}
-                for i in range(min(len(pilots), len(phw), len(plr)))
-            ]
-
-            cabin_objs = [
-                {"id": c.strip(), "hours_worked": 0, "last_rest": 12, "available": crew_available}
-                for c in cabin if c.strip()
-            ]
-
-            out[fid] = {
-                "flight_id": fid,
-                "pilots": pilot_objs,
-                "cabin_crew": cabin_objs,
-                "crew_available": crew_available
-            }
-    return out
+def parse_crew_schedule(file_path='data/crew_schedule.csv'):
+    crew_data = {}
+    try:
+        with open(file_path, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                fid = row.get('FlightID')
+                if not fid:
+                    continue
+                
+                pilots = row.get('PilotIDs', '').split(';') if row.get('PilotIDs') else []
+                cabin = row.get('CabinCrewIDs', '').split(';') if row.get('CabinCrewIDs') else []
+                
+                hours_str = row.get('HoursWorked', '')
+                rest_str = row.get('LastRest', '')
+                
+                hours = [int(x) for x in hours_str.split(';')] if hours_str else []
+                rest = [int(x) for x in rest_str.split(';')] if rest_str else []
+                
+                crew_data[fid] = {
+                    'pilots': [{'id': p, 'hours_worked': h, 'last_rest': r} for p, h, r in zip(pilots, hours, rest)],
+                    'cabin_crew': [{'id': c} for c in cabin],
+                    'available': row.get('Available', 'NO').upper() == 'YES'
+                }
+    except FileNotFoundError:
+        print(f"Warning: {file_path} not found.")
+    except KeyError as e:
+        print(f"Error reading CSV header in crew schedule: Missing column {e}")
+        
+    return crew_data
 
 def parse_passenger_load(path="data/passenger_load.csv"):
     out = {}
