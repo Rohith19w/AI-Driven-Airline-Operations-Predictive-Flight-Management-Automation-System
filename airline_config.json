@@ -1,1 +1,29 @@
-
+{
+  "thresholds": {
+    "crosswind_knots": 40,
+    "visibility_meters": 1500,
+    "engine_thrust_deviation": 20,
+    "engine_thrust_baseline": 100,
+    "cabin_pressure_drop": 0.5,
+    "cabin_pressure_min": 0.5,
+    "engine_vibration": 4.0,
+    "turbulence_severe": 3,
+    "fuel_burn_deviation": 15,
+    "fuel_burn_baseline": 2200,
+    "cabin_temp_high": 30,
+    "runway_queue_threshold": 25,
+    "boarding_time_threshold": 40
+  },
+  "crew_rules": {
+    "min_rest_hours": 10,
+    "max_daily_hours": 14,
+    "min_pilots": 2,
+    "min_cabin_crew": 3,
+    "assumed_flight_hours": 3
+  },
+  "passenger_rules": {
+    "overbooking_threshold_pct": 10,
+    "under_utilization_pct": 70,
+    "moving_avg_window": 7
+  }
+}
